@@ -1,0 +1,110 @@
+https://www.youtube.com/watch?v=P-KxID-aGWc
+
+creamos las carpetas client y server. 
+
+vamos dentro de server e iniciamos node   npm init --yes y con eso se nos crea package.json 
+
+creamos index.js y readme.md 
+
+instalamos express para gestionar las rutas. 
+
+e instalamos nodemon tmb.
+
+vamos ahora a crear variables de entorno (en caso de que sea development o production)
+para esto, usamos una libreria: npm install dotenv 
+creamos también un fichero llamado .env, donde creamos nuestras variable, por ejemplo. PORT=3000 
+y lo usamos en index.js con process.env.PORT 
+process es como la applicación. usamos la palabra process para decir que vamos a usar variables de entorno. 
+
+para poder generar las variables de entorno, tmb necesitamos en el middleware poner: 
+// 2 Middlewares
+require("dotenv").config()
+así es como instanciamos que existe dotenv 
+
+
+Vamos ahora a copiar nuestro Secret Key y llevarlo a .env 
+
+Requerimos stripe 
+Instalamos npm install stripe 
+
+podemos darle un console.log a ver que sale: 
+
+
+const stripe = require('stripe')(process.env.STRIPE_KEY);
+
+app.get("/", (req, res) => {
+    console.log(stripe);
+    res.send("Hola mundo")
+})
+
+y nos salen todos los metodos de stripe que se han instalado. 
+
+Vamos a Stripe a crear un producto. Vamos a Products -> Add New. 
+Creamos una pluma (un boli) y la creamos con 2 precios, 9 y 15€. 
+Copiamos el ID del precio 9, y lo pasamos en index.js: 
+        const productId = "price_1KkXzpAM8E9TFlUQRhFUu3Se";
+Ahora vamos a iniciar una sesión. 
+
+creamos todo esto: 
+
+app.get("/", async (req, res) => {
+    console.log(stripe);
+
+        //1. Establecer los IDs de los precios de STRIPE. 
+        const productId = "price_1KkXzpAM8E9TFlUQRhFUu3Se";
+
+        //2. Generar una sesión. Esto es un momento en el cual stripe ya sabe que el usuario quiere comprar. 
+        // por lo tanto emite la información requerida para la compra.
+        // entre esa información está la URL de compra. 
+
+        const session = await stripe.checkout.sessions.create({
+            // el primer dato que tengo que mandar es la linea de producto
+            line_items: [
+                {
+                    price: productId,
+                    quantity: 1
+                }
+            ],
+            payment_method_types: [
+                "card",
+                "oxxo"
+            ],
+            mode: "payment", //3. este es el tipo de pago
+            success_url: `http://localhost:3000/success`,
+            cancel_url: `http://localhost:3000?cancelled=true`
+        })
+
+            console.log(session);
+
+
+y lo probamos a ver que tal y sale error. Dice que el API Key it's not provided pero eso es 
+porque dotEnv se llama despues de const stripe = require('stripe')(process.env.STRIPE_KEY);
+
+52:11
+
+Ahora funciona y recibimos un link en la consola. Ese link lleva a la pagina. 
+si le meto el credit card de prueba, hago un pago y me dice cannot get/success porque la ruta esa no esta creada todavia.
+me ha llevado a http://localhost:3000/success 
+
+y si le doy a back me lleva a: http://localhost:3000/?cancelled=true
+
+como esto es un backend, lo que vamos a hacer es dejar de loguear la session y vamos a camabiar en console.log 
+por res.json 
+
+    res.json({
+                stripe_info: session
+            })
+
+pero para esto, necesito decirle a traves de un middleware que voy a usar json. 
+app.use(express.json({extended: true}));
+
+
+y tambien instalo cors, npm install cors
+permite manejo de recursos entre servidores o instancias. 
+const cors = require("cors");
+app.use(cors());
+
+
+
+
+
