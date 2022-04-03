@@ -104,7 +104,104 @@ permite manejo de recursos entre servidores o instancias.
 const cors = require("cors");
 app.use(cors());
 
+y ahora si vamos a localhost 3000, si recibimos el json entero: 
+
+{
+stripe_info: {
+id: "cs_test_a1FeTyFEEHY0S7IlbCAAyFNi1LwQFTFykSpyybFZeSntYUt0vGWdVXeJ57",
+object: "checkout.session",
+after_expiration: null,
+allow_promotion_codes: null,
+amount_subtotal: 900,
+amount_total: 900,
+automatic_tax: {
+enabled: false,
+status: null
+},
+billing_address_collection: null,
+cancel_url: "http://localhost:3000?cancelled=true",
+client_reference_id: null,
+consent: null,
+consent_collection: null,
+currency: "eur",
+customer: null,
+customer_creation: "always",
+customer_details: null,
+customer_email: null,
+expires_at: 1649108641,
+livemode: false,
+locale: null,
+metadata: { },
+mode: "payment",
+payment_intent: "pi_3KkbDKAM8E9TFlUQ120Jpv4z",
+payment_link: null,
+payment_method_options: { },
+payment_method_types: [
+"card"
+],
+payment_status: "unpaid",
+phone_number_collection: {
+enabled: false
+},
+recovered_from: null,
+setup_intent: null,
+shipping: null,
+shipping_address_collection: null,
+shipping_options: [ ],
+shipping_rate: null,
+status: "open",
+submit_type: null,
+subscription: null,
+success_url: "http://localhost:3000/success",
+total_details: {
+amount_discount: 0,
+amount_shipping: 0,
+amount_tax: 0
+},
+url: "https://checkout.stripe.com/pay/cs_test_a1FeTyFEEHY0S7IlbCAAyFNi1LwQFTFykSpyybFZeSntYUt0vGWdVXeJ57#fidkdWxOYHwnPyd1blpxYHZxWjA0TmNVNTBESD1APFFDaVBUXDRQc1FfS1VuS0ZJd09fazZgbWNmcVNrTEhjN0poXEhOTjVvaHNrVXZXVUdPTXV8a1N2R0BIXTxVSmttT289dEZjdF1Rd09UNTU8dnNyTUFgVScpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl"
+}
 
 
 
 
+ahora vamos a deploy el servidor asi que vamos a crear una cuenta en heroku 
+le doy create new app 
+lo llamo lazar-stripe 
+
+para subir el codigo a heroku, vamos a hacerlo a traves de github. 
+Creo un nuevo repository lazar-stripe en git 
+
+copio la url esta: 
+https://github.com/lazaralin990/lazar-stripe.git
+
+y antes de conectarlo a traves de la consola, creo un fichero gitignore 
+
+en .gitignore le pongo: 
+.env
+node_modules/
+
+vamos ahora en la consola a inicir el repo con git init 
+
+y despues: 
+git remote add origin https://github.com/lazaralin990/lazar-stripe.git
+luego le doy git add .
+y git commit -m "base"
+
+luego git push origin master y subo todo. 
+
+ahora vamos a heroku a linkear la conexión con github 
+
+he conectado el repo lazar-stripe 
+
+he heroku tenemos que configurar las variable de entorno ahora asi que vamos a settings 
+y allí tenemos Reveal Config Vars 
+y le metemos el STRIPE_KEY 
+no hace falta el PORT porque ya le asigna Heroku uno. 
+
+despues de eso vamos a la opción deploy y ya configuramos el automatic deploy y le damos un nuevo deploy. 
+
+arreglamos un par de bugs con stripe y al final va. el url que genera heroku es: 
+https://lazar-stripe.herokuapp.com
+
+la applicación esta deployed en heroku, en el servidor. Cada vez que se abre el link, un nuevo url se genera. 
+Hay que entener ahora como usar esta parte.
